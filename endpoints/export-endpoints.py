@@ -24,6 +24,9 @@ print('Org key: ' + org_key)
 print('Base URL: ' + base_url)
 print('API token: ' + api_token)
 
+# Documentation on this specific API call can be found here:
+# https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
+
 # Form our request URL:
 req_url = base_url + '/appservices/v6/orgs/' + org_key + '/devices/_search'
 
@@ -46,13 +49,12 @@ req = requests.post(req_url, headers=headers, json=data)
 print('Status code: ' + str(req.status_code))
 
 devices_dict = req.json()
-# devices_dict['results']
 devices = pd.DataFrame.from_dict(devices_dict['results'])
 devices.set_index('device_owner_id', drop=True, inplace=True)
 
 print('Total devices found: ', end="")
 print(devices_dict.get('num_found'))
-devices.head()
 
 # Cool. Let's export to CSV now
 devices.to_csv('devices.csv')
+print('Saved to \'devices.csv\'')
