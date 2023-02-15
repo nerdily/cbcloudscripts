@@ -3,4 +3,4 @@ This repository is a collection of simple demo scripts for using the CB Cloud AP
 
 Reference information about the API can be found [here](https://developer.carbonblack.com).
 
-As of now this is a shell of a repository and the structure is being determined.
+Where possible the required API permissions are contained at the top of each script. 
