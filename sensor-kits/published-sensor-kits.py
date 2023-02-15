@@ -1,8 +1,7 @@
-import pandas as pd
 import requests
 
 # API key permissions required:
-# Device - General Information - device - read
+# Device - Sensor kits - org.kits - execute
 
 api_id = 'api_id'
 api_secret_key = 'api_secret'
@@ -25,37 +24,23 @@ print('Org key: ' + org_key)
 print('Base URL: ' + base_url)
 print('API token: ' + api_token)
 
-# Documentation on this specific API call can be found here:
-# https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
+# GET /appservices/v5/orgs/1/kits/published
 
 # Form our request URL:
-req_url = base_url + '/appservices/v6/orgs/' + org_key + '/devices/_search'
-
+req_url = base_url + '/appservices/v5/orgs/' + org_id + '/kits/published?deploymentType=ENDPOINT'
 # Set our headers
 headers = {'X-Auth-Token': api_token,
+           'X-Org': org_key,
            'Content-Type': 'application/json'
            }
-# Set our data (body) for the request
-data = {"criteria":{"deployment_type":["ENDPOINT","WORKLOAD","VDI"]},"sort":[{"field":"last_contact_time","order":"DESC"}],"start":1,"rows":10000,"":""}
 
 # Double check they're ok
 print('Request URL: ' + req_url)
 print('Headers: ', end="")
 print(headers)
-print('Data: ', end="")
-print(data)
 
 # Make the request
-req = requests.post(req_url, headers=headers, json=data)
+req = requests.get(req_url, headers=headers)
 print('Status code: ' + str(req.status_code))
 
-devices_dict = req.json()
-devices = pd.DataFrame.from_dict(devices_dict['results'])
-devices.set_index('device_owner_id', drop=True, inplace=True)
-
-print('Total devices found: ', end="")
-print(devices_dict.get('num_found'))
-
-# Cool. Let's export to CSV now
-devices.to_csv('devices.csv')
-print('Saved to \'devices.csv\'')
+req.json()
