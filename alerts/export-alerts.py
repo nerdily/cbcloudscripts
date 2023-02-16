@@ -1,18 +1,21 @@
 import pandas as pd
 import requests
 
-# This script exports the queried for endpoints into a csv. To change the query, look at the "data" variable which is the
+# This script exports the queried for alerts into a csv. To change the query, look at the "data" variable which is the
 # json-formatted request made to the CB Cloud back end. The developer documentation has a full list of what can be queried.
 # The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 endpoints, you would need
 # multiple requests to fetch them all.
 
 # API key permissions required:
-# Device - General Information - device - read
+# Alerts - General information - org.alerts - read
+# Alerts - Dismiss - org.alerts.dismiss - execute
+# Alerts - Notes - org.alerts.notes - create, read, delete
+# Alerts - ThreatMetadata - org.xdr.metadata - read (optional)
 
-api_id = 'api_id'
-api_secret_key = 'api_secret'
-org_key = 'org_key'
-org_id = 'org_id'
+api_id = 'K1EZEKYS51'
+api_secret_key = 'EMRBLW6HIQGLV2BI1KHDUJ5K'
+org_key = '7PESY63N'
+org_id = '1035'
 base_url = 'https://defense.conferdeploy.net'
 
 # Alternatively you can prompt each time for information:
@@ -31,17 +34,17 @@ print('Base URL: ' + base_url)
 print('API token: ' + api_token)
 
 # Documentation on this specific API call can be found here:
-# https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/
+# https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/
 
 # Form our request URL:
-req_url = base_url + '/appservices/v6/orgs/' + org_key + '/devices/_search'
+req_url = base_url + '/appservices/v6/orgs/' + org_key + '/alerts/_search'
 
 # Set our headers
 headers = {'X-Auth-Token': api_token,
            'Content-Type': 'application/json'
            }
 # Set our data (body) for the request
-data = {"criteria":{"deployment_type":["ENDPOINT","WORKLOAD","VDI"]},"sort":[{"field":"last_contact_time","order":"DESC"}],"start":1,"rows":10000,"":""}
+data = {"criteria":{"group_results":"false","minimum_severity":"1","category":["THREAT"],"workflow":["DISMISSED","OPEN"],"alert_type":["CB_ANALYTICS"],"create_time":{"range":"all"}},"query":"","sort":[{"field":"create_time","order":"DESC"}],"start":0,"rows":10000}
 
 # Double check they're ok
 print('Request URL: ' + req_url)
@@ -54,13 +57,15 @@ print(data)
 req = requests.post(req_url, headers=headers, json=data)
 print('Status code: ' + str(req.status_code))
 
-devices_dict = req.json()
-devices = pd.DataFrame.from_dict(devices_dict['results'])
-devices.set_index('device_owner_id', drop=True, inplace=True)
+# Let's see what we've got
+alerts_dict = req.json()
 
-print('Total devices found: ', end="")
-print(devices_dict.get('num_found'))
+print('Total alerts found: ', end="")
+print(alerts_dict.get('num_found'))
+print('Total alerts available: ', end="")
+print(alerts_dict.get('num_available'))
+
+alerts = pd.DataFrame.from_dict(alerts_dict['results'])
 
 # Cool. Let's export to CSV now
-devices.to_csv('devices.csv')
-print('Saved to \'devices.csv\'')
+alerts.to_csv('alerts.csv')
