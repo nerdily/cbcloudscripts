@@ -1,6 +1,9 @@
 import pandas as pd
 import requests
 
+# This script exports the queried for endpoints into a csv. To change the query, look at the "data" variable which is the
+# json-formatted request made to the CB Cloud back end. The developer documentation has a full list of what can be queried.
+
 # API key permissions required:
 # Device - General Information - device - read
 
