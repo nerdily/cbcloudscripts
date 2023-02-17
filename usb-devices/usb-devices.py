@@ -4,10 +4,10 @@ import pandas as pd
 # API key permissions required:
 # Device Control - Manage External Devices - external-device.manage - read
 
-api_id = 'QW1A2MFITH'
-api_secret_key = '2ZIR4U3A67BCWGK82GLFCI9K'
-org_key = '7PESY63N'
-org_id = '1035'
+api_id = 'api_id'
+api_secret_key = 'api_secret'
+org_key = 'org_key'
+org_id = 'org_id'
 base_url = 'https://defense.conferdeploy.net'
 
 # Alternatively you can prompt each time for information:
