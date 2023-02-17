@@ -12,10 +12,10 @@ import requests
 # Alerts - Notes - org.alerts.notes - create, read, delete
 # Alerts - ThreatMetadata - org.xdr.metadata - read (optional)
 
-api_id = 'K1EZEKYS51'
-api_secret_key = 'EMRBLW6HIQGLV2BI1KHDUJ5K'
-org_key = '7PESY63N'
-org_id = '1035'
+api_id = 'api_id'
+api_secret_key = 'api_secret'
+org_key = 'org_key'
+org_id = 'org_id'
 base_url = 'https://defense.conferdeploy.net'
 
 # Alternatively you can prompt each time for information:
