@@ -4,9 +4,9 @@ import argparse
 import sys
 
 
-# This script exports the queried for alerts into a csv. To change the query, look at the "data" variable which is the
+# This script exports the queried for alerts into a csv. To change the query, look at the "payload" variable which is the
 # json-formatted request made to the CB Cloud back end. The developer documentation has a full list of what can be queried.
-# The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 endpoints, you would need
+# The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 alerts, you would need
 # multiple requests to fetch them all.
 
 # Usage: python export-endpoints.py --help
