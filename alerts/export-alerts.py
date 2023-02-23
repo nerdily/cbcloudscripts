@@ -9,7 +9,7 @@ import sys
 # The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 alerts, you would need
 # multiple requests to fetch them all.
 
-# Usage: python export-endpoints.py --help
+# Usage: python export-alerts.py --help
 
 # API key permissions required:
 # Alerts - General information - org.alerts - read
