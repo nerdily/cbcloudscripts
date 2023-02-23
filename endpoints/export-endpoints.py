@@ -3,6 +3,7 @@ import argparse
 import sys
 import pandas as pd
 
+
 # This script exports the queried for endpoints into a csv. To change the query, look at the "payload" variable which is the
 # json-formatted request made to the CB Cloud back end. The developer documentation has a full list of what can be queried.
 # The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 endpoints, you would need
@@ -56,16 +57,16 @@ def main():
                                          Cloud for endpoint data.")
     requiredNamed = parser.add_argument_group('required arguments')
     requiredNamed.add_argument("-e", "--environment", required=True, default="PROD05",
-                        choices=["EAP1", "PROD01", "PROD02", "PROD05",
-                                 "PROD06", "PRODNRT", "PRODSYD", "PRODUK", "GOVCLOUD"],
-                        help="Environment for the Base URL")
+                               choices=["EAP1", "PROD01", "PROD02", "PROD05",
+                                        "PROD06", "PRODNRT", "PRODSYD", "PRODUK", "GOVCLOUD"],
+                               help="Environment for the Base URL")
     requiredNamed.add_argument("-o", "--org_key", required=True,
-                        help="Org key (found in your product console under \
+                               help="Org key (found in your product console under \
                               Settings > API Access > API Keys)")
     requiredNamed.add_argument("-i", "--api_id", required=True,
-                        help="API ID")
+                               help="API ID")
     requiredNamed.add_argument("-s", "--api_secret", required=True,
-                        help="API Secret Key")
+                               help="API Secret Key")
     args = parser.parse_args()
 
     req_url = build_base_url(args.environment, args.org_key)
