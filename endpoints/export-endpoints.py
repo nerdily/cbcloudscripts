@@ -43,6 +43,8 @@ def get_environment(environment):
 
 def build_base_url(environment, org_key):
     # Build the base URL
+    # Documentation on this specific API call can be found here:
+    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/#search-devices
     # rtype: string
 
     environment = get_environment(environment)
