@@ -145,11 +145,6 @@ def main():
     for i, j in usb_devices.iterrows():
         req_url = build_details_url(args.environment, args.org_key)
 
-        # headers = {
-        #     "Content-Type": "application/json",
-        #     "X-Auth-Token": api_token
-        # }
-
         # Make the request
         response = requests.get(req_url, headers=headers)
 
