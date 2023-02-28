@@ -47,6 +47,16 @@ def build_base_url(environment, org_id):
     return f"{environment}/appservices/v5/orgs/{org_id}/kits/published?deploymentType=ENDPOINT"
 
 
+def build_details_url(environment, org_key):
+    # Build the summary URL
+    # Documentation on this specific API call can be found here:
+    # https://developer.carbonblack.com/reference/carbon-black-cloud/cb-defense/latest/device-control-api/#get-usb-device-by-id
+    # rtype: string
+
+    environment = get_environment(environment)
+    return f"{environment}/device_control/v3/orgs/{org_key}/devices/{j.usb_id}/endpoints"
+
+
 def main():
     # Main function to parse arguments and retrieve the endpoint results
 
@@ -89,7 +99,6 @@ def main():
             json.dump(response.json(), outfile, indent=4)
     else:
         print(response)
-
 
 
 if __name__ == "__main__":

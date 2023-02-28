@@ -5,7 +5,7 @@ import pandas as pd
 
 # This script exports the queried for USB devices and saves them as an Excel file. To change the query, look at the "payload" variable which is the
 # json-formatted request made to the CB Cloud back end. The developer documentation has a full list of what can be queried.
-# The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 endpoints, you would need
+# The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 devices, you would need
 # multiple requests to fetch them all.
 
 # Explanation on the resultant Excel file:
@@ -53,8 +53,6 @@ def build_summary_url(environment, org_key):
 
     environment = get_environment(environment)
     return f"{environment}/device_control/v3/orgs/{org_key}/devices/_search"
-
-
 
 
 def flatten_json(obj):
@@ -164,8 +162,6 @@ def main():
 
     xlwriter.close()
     print('Data exported to usb-devices.xls')
-
-
 
 
 if __name__ == "__main__":
