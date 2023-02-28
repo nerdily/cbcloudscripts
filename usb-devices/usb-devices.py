@@ -2,7 +2,6 @@ import requests
 import argparse
 import sys
 import pandas as pd
-# import openpyxl
 
 # This script exports the queried for USB devices and saves them as an Excel file. To change the query, look at the "payload" variable which is the
 # json-formatted request made to the CB Cloud back end. The developer documentation has a full list of what can be queried.
