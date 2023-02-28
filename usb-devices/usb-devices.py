@@ -2,11 +2,17 @@ import requests
 import argparse
 import sys
 import pandas as pd
+# import openpyxl
 
-# This script exports the queried for USB devices and saves them as a CSV. To change the query, look at the "payload" variable which is the
+# This script exports the queried for USB devices and saves them as an Excel file. To change the query, look at the "payload" variable which is the
 # json-formatted request made to the CB Cloud back end. The developer documentation has a full list of what can be queried.
 # The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 endpoints, you would need
 # multiple requests to fetch them all.
+
+# Explanation on the resultant Excel file:
+# A "Summary" tab will be created that has an overview of the devices. Column A has a "Device no." entry. This corresponds to the
+# relevant "device0" "device1" etc. tab(s) also created which contains USB device details such as which endpoints it has been plugged into,
+# not just the *last* endpoint it was plugged into
 
 # Usage: python usb-devices.py --help
 
@@ -40,8 +46,8 @@ def get_environment(environment):
         return "https://gprd1usgw1.carbonblack-us-gov.vmware.com"
 
 
-def build_base_url(environment, org_key):
-    # Build the base URL
+def build_summary_url(environment, org_key):
+    # Build the summary URL
     # Documentation on this specific API call can be found here:
     # https://developer.carbonblack.com/reference/carbon-black-cloud/cb-defense/latest/device-control-api/#search-usb-devices
     # rtype: string
@@ -50,7 +56,38 @@ def build_base_url(environment, org_key):
     return f"{environment}/device_control/v3/orgs/{org_key}/devices/_search"
 
 
+
+
+def flatten_json(obj):
+    global ret
+    ret = {}
+
+    def flatten(x, flattened_key=""):
+        if type(x) is dict:
+            for current_key in x:
+                flatten(x[current_key], flattened_key + current_key + '_')
+        elif type(x) is list:
+            i = 0
+            for elem in x:
+                flatten(elem, flattened_key + str(i) + '_')
+                i += 1
+        else:
+            # x === string, integer, bool, etc
+            ret[flattened_key[:-1]] = x
+    flatten(obj)
+    return ret
+
+
 def main():
+    def build_details_url(environment, org_key):
+        # Build the summary URL
+        # Documentation on this specific API call can be found here:
+        # https://developer.carbonblack.com/reference/carbon-black-cloud/cb-defense/latest/device-control-api/#get-usb-device-by-id
+        # rtype: string
+
+        environment = get_environment(environment)
+        return f"{environment}/device_control/v3/orgs/{org_key}/devices/{j.usb_id}/endpoints"
+
     # Main function to parse arguments and retrieve the endpoint results
 
     parser = argparse.ArgumentParser(prog="export-endpoints.py",
@@ -70,7 +107,7 @@ def main():
                                help="API Secret Key")
     args = parser.parse_args()
 
-    req_url = build_base_url(args.environment, args.org_key)
+    req_url = build_summary_url(args.environment, args.org_key)
     api_token = f"{args.api_secret}/{args.api_id}"
 
     payload = {
@@ -97,14 +134,38 @@ def main():
         print(f"Success {response}")
         usb_devices_dict = response.json()
         usb_devices = pd.DataFrame.from_dict(usb_devices_dict['results'])
-        usb_devices.set_index('id', drop=True, inplace=True)
+        usb_devices.rename(columns={"id": "usb_id"}, inplace=True)
+        usb_devices.index.name = "Device no."
 
-        # Cool. Let's export to CSV now
-        usb_devices.to_csv('usb-devices.csv')
-        print('Exported to \'usb-devices.csv\'')
+        # Cool. Let's write to Excel file now
+        xlwriter = pd.ExcelWriter('usb-devices.xlsx')
+        usb_devices.to_excel(xlwriter, sheet_name='Summary')
 
     else:
         print(response)
+
+    # Loop through each usb_id from the usb_devices dataframe and pull back the info
+    for i, j in usb_devices.iterrows():
+        req_url = build_details_url(args.environment, args.org_key)
+
+        # headers = {
+        #     "Content-Type": "application/json",
+        #     "X-Auth-Token": api_token
+        # }
+
+        # Make the request
+        response = requests.get(req_url, headers=headers)
+
+        # Let's see what we've got
+        usb_device_endpoints_dict = response.json()
+        flattened_usb_devices = flatten_json(usb_device_endpoints_dict)
+        usb_devices_df = pd.DataFrame.from_dict(flattened_usb_devices, orient='index', columns=['value'])
+
+        usb_devices_df.to_excel(xlwriter, sheet_name='device' + str(i))
+
+    xlwriter.close()
+    print('Data exported to usb-devices.xls')
+
 
 
 
