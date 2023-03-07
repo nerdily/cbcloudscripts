@@ -12,6 +12,7 @@ import pandas as pd
 # A "Summary" tab will be created that has an overview of the devices. Column A has a "Device no." entry. This corresponds to the
 # relevant "device0" "device1" etc. tab(s) also created which contains USB device details such as which endpoints it has been plugged into,
 # not just the *last* endpoint it was plugged into
+# If the -1 or --single command flag is given, the USB device information will be output to a single tab on the sheet.
 
 # Usage: python usb-devices.py --help
 
@@ -76,6 +77,7 @@ def flatten_json(obj):
 
 
 def main():
+
     def build_details_url(environment, org_key):
         # Build the summary URL
         # Documentation on this specific API call can be found here:
@@ -90,6 +92,8 @@ def main():
     parser = argparse.ArgumentParser(prog="export-endpoints.py",
                                      description="Query VMware Carbon Black \
                                          Cloud for endpoint data.")
+    parser.add_argument("-1", "--single", action='store_true',
+                        help="Place all USB device info on a single Excel tab instead of 1 tab per USB device"),
     requiredNamed = parser.add_argument_group('required arguments')
     requiredNamed.add_argument("-e", "--environment", required=True, default="PROD05",
                                choices=["EAP1", "PROD01", "PROD02", "PROD05",
@@ -141,6 +145,9 @@ def main():
     else:
         print(response)
 
+    if args.single:
+        all_usb_devices_df = pd.DataFrame()
+
     # Loop through each usb_id from the usb_devices dataframe and pull back the info
     for i, j in usb_devices.iterrows():
         req_url = build_details_url(args.environment, args.org_key)
@@ -150,10 +157,20 @@ def main():
 
         # Let's see what we've got
         usb_device_endpoints_dict = response.json()
-        flattened_usb_devices = flatten_json(usb_device_endpoints_dict)
-        usb_devices_df = pd.DataFrame.from_dict(flattened_usb_devices, orient='index', columns=['value'])
+        flattened_usb_device = flatten_json(usb_device_endpoints_dict)
+        usb_device = pd.DataFrame.from_dict(flattened_usb_device, orient='index', columns=['value'])
+        if args.single:
+            # Add dataframe row with device number
+            top_row = pd.DataFrame(['device'+str(i)],columns=['value'])
+            usb_device = pd.concat([top_row, usb_device])
+            # Append to a single dataframe
+            all_usb_devices_df = pd.concat([all_usb_devices_df, usb_device])
+        else:
+            usb_device.to_excel(xlwriter, sheet_name='device' + str(i))
 
-        usb_devices_df.to_excel(xlwriter, sheet_name='device' + str(i))
+    if args.single:
+        # Write the single dataframe out to Excel
+        all_usb_devices_df.to_excel(xlwriter, sheet_name='devices')
 
     xlwriter.close()
     print('Data exported to usb-devices.xls')
