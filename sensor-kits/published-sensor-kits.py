@@ -62,7 +62,7 @@ def main():
 
     parser = argparse.ArgumentParser(prog="export-endpoints.py",
                                      description="Query VMware Carbon Black \
-                                         Cloud for endpoint data.")
+                                         Cloud for available sensor kits.")
     requiredNamed = parser.add_argument_group('required arguments')
     requiredNamed.add_argument("-e", "--environment", required=True, default="PROD05",
                                choices=["EAP1", "PROD01", "PROD02", "PROD05",

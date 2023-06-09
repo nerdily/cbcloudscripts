@@ -91,7 +91,7 @@ def main():
 
     parser = argparse.ArgumentParser(prog="export-endpoints.py",
                                      description="Query VMware Carbon Black \
-                                         Cloud for endpoint data.")
+                                         Cloud for USB device data.")
     parser.add_argument("-1", "--single", action='store_true',
                         help="Place all USB device info on a single Excel tab instead of 1 tab per USB device"),
     requiredNamed = parser.add_argument_group('required arguments')
