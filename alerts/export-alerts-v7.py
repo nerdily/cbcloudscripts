@@ -13,10 +13,6 @@ import sys
 
 # API key permissions required:
 # Alerts - General information - org.alerts - read
-# Alerts - Dismiss - org.alerts.dismiss - execute
-# Alerts - Notes - org.alerts.notes - create, read, delete
-# Alerts - ThreatMetadata - org.xdr.metadata - read (optional)
-
 
 def get_environment(environment):
     # Function to get the required environment to build a Base URL. More info about building a Base URL can be found at
