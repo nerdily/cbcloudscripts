@@ -4,7 +4,7 @@ import argparse
 import sys
 
 
-# This script exports the queried for alerts into a csv via the alerts v6 API. To change the query, look at the "payload" variable which is the
+# This script exports the queried for alerts into a csv via the alerts v7 API. To change the query, look at the "payload" variable which is the
 # json-formatted request made to the CB Cloud back end. The developer documentation has a full list of what can be queried.
 # The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 alerts, you would need
 # multiple requests to fetch them all.
@@ -47,12 +47,12 @@ def get_environment(environment):
 def build_base_url(environment, org_key):
     # Build the base URL
     # Documentation on this specific API call can be found here:
-    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/deprecated/alerts-api/
+    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/alerts-api/#alert-search
 
     # rtype: string
 
     environment = get_environment(environment)
-    return f"{environment}/appservices/v6/orgs/{org_key}/alerts/_search"
+    return f"{environment}/api/alerts/v7/orgs/{org_key}/alerts/_search"
 
 
 def main():
@@ -60,7 +60,7 @@ def main():
 
     parser = argparse.ArgumentParser(prog="export-endpoints.py",
                                      description="Query VMware Carbon Black \
-                                         Cloud for alert data.")
+                                         Cloud for alert v7 data.")
     requiredNamed = parser.add_argument_group('required arguments')
     requiredNamed.add_argument("-e", "--environment", required=True, default="PROD05",
                                choices=["EAP1", "PROD01", "PROD02", "PROD05",
@@ -79,32 +79,20 @@ def main():
     api_token = f"{args.api_secret}/{args.api_id}"
 
     payload = {
-      "criteria": {
-            "group_results": "false",
-            "minimum_severity": "1",
-            "category": [
-              "THREAT"
-            ],
-            "workflow": [
-              "DISMISSED",
-              "OPEN"
-            ],
-            "alert_type": [
-              "CB_ANALYTICS"
-            ],
-            "create_time": {
-              "range": "all"
+        "time_range": {
+            "range": "all"
+        },
+        "criteria": {
+            "minimum_severity": 1,
+        },
+        "start": "1",
+        "rows": "10000",
+        "sort": [
+            {
+                "field": "severity",
+                "order": "DESC"
             }
-      },
-      "query": "",
-      "sort": [
-        {
-          "field": "create_time",
-          "order": "DESC"
-        }
-      ],
-      "start": 0,
-      "rows": 10000
+        ]
     }
 
     headers = {
@@ -127,8 +115,8 @@ def main():
         alerts = pd.DataFrame.from_dict(alerts_dict['results'])
 
         # Cool. Let's export to CSV now
-        alerts.to_csv('alerts.csv')
-        print('Saved to \'alerts.csv\'')
+        alerts.to_csv('alerts-v7.csv')
+        print('Saved to \'alerts-v7.csv\'')
     else:
         print(response)
 

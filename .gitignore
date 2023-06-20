@@ -1,6 +1,7 @@
 /endpoints/devices.csv
 /keys.txt
 /alerts/alerts.csv
+/alerts/alerts-v7.csv
 /usb-devices/usb-devices.csv
 /sensor-kits/sensor-kits.json
 /usb-devices/usb-devices.xlsx
