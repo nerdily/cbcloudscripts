@@ -153,7 +153,6 @@ def main():
         # Iterate through the events dataframe and do API call for each process_guid. For each process_guid we request a job_id.
         # Then check status of the job_id. If completed = contacted, return the info.
         for i, row in events.iterrows():
-            # if pd.isnull(events.loc[i, 'process_guid']) != 1:
             req_url = build_process_detail_url(args.environment, args.org_key)
             process_guid = row.process_guid
             payload = {
