@@ -133,7 +133,6 @@ def main():
 
         # Now that we have a job_id, check the status of it.
         req_url = build_search_job_id_url(args.environment, args.org_key, job_id)
-        #api_token = f"{args.api_secret}/{args.api_id}"
 
         # Initialize contacted and completed to different values so the while loop kicks off at least once
         contacted = 1
