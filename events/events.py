@@ -100,10 +100,9 @@ def main():
     payload = {
       "criteria": {},
       "exclusions": {},
-      "query": "process_name:powershell.exe AND device_policy:workstation\\-general_enf ",
+      "query": "process_name:powershell.exe",
       "time_range": {
-        "start": "2023-06-26T11:45:00.000Z",
-        "end": "2023-06-26T11:48:00.000Z"
+        "window": "-1h"
       },
       "rows": 10000,
       "fields": [
