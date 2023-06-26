@@ -15,7 +15,8 @@ import sys
 # Usage: python export-alerts.py --help
 
 # API key permissions required:
-# TBD
+# Search - Events - org.search.events - CREATE
+# Search - Events - org.search.events - READ
 
 def get_environment(environment):
     # Function to get the required environment to build a Base URL. More info about building a Base URL can be found at
@@ -71,30 +72,18 @@ def build_process_detail_url(environment, org_key):
     environment = get_environment(environment)
     return f"{environment}/api/investigate/v2/orgs/{org_key}/processes/detail_jobs"
 
-def build_process_detail_job_id_url(environment, org_key, job_id):
-    # Buidl the URL to return the process details based on job_id
-    # Documentation on this specific API call can be found here:
-    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-api-processes/#retrieve-results-for-a-process-detail-search-v2
-
-    # rtype: string
-    environment = get_environment(environment)
-    return f"{environment}/api/investigate/v2/orgs/{org_key}/processes/detail_jobs/{job_id}/results"
-
 
 def main():
     # Main function to parse arguments and retrieve the endpoint results
 
     parser = argparse.ArgumentParser(prog="export-endpoints.py",
-                                     description="Query VMware Carbon Black \
-                                         Cloud for process data.")
+                                     description="Query VMware Carbon Black Cloud for process data.")
     requiredNamed = parser.add_argument_group('required arguments')
     requiredNamed.add_argument("-e", "--environment", required=True, default="PROD05",
-                               choices=["EAP1", "PROD01", "PROD02", "PROD05",
-                                        "PROD06", "PRODNRT", "PRODSYD", "PRODUK", "GOVCLOUD"],
+                               choices=["EAP1", "PROD01", "PROD02", "PROD05", "PROD06", "PRODNRT", "PRODSYD", "PRODUK", "GOVCLOUD"],
                                help="Environment for the Base URL")
     requiredNamed.add_argument("-o", "--org_key", required=True,
-                               help="Org key (found in your product console under \
-                              Settings > API Access > API Keys)")
+                               help="Org key (found in your product console under Settings > API Access > API Keys)")
     requiredNamed.add_argument("-i", "--api_id", required=True,
                                help="API ID")
     requiredNamed.add_argument("-s", "--api_secret", required=True,
@@ -167,7 +156,7 @@ def main():
                 job_id = response['job_id']
 
                 # Now that we have the job_id, check the status of it:
-                req_url = build_process_detail_job_id_url(args.environment, args.org_key, job_id)
+                req_url = build_search_job_id_url(args.environment, args.org_key, job_id)
 
                 # Reset contacted and completed to different values so the while loop kicks off at least once
                 contacted = 1
