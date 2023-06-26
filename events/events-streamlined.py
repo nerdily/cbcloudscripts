@@ -64,15 +64,6 @@ def build_search_job_id_url(environment, org_key, job_id):
     environment = get_environment(environment)
     return f"{environment}/api/investigate/v2/orgs/{org_key}/processes/detail_jobs/{job_id}/results"
 
-def build_process_detail_url(environment, org_key):
-    # Build the URL to return the process details job_id on process_guid
-    # Documentation on this specific API call can be found here:
-    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-api-processes/#request-details-of-processes-v2
-
-    # rtype: string
-    environment = get_environment(environment)
-    return f"{environment}/api/investigate/v2/orgs/{org_key}/processes/detail_jobs"
-
 
 def main():
     # Main function to parse arguments and retrieve the endpoint results
