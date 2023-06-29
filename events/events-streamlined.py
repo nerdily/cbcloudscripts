@@ -94,7 +94,7 @@ def main():
       },
       "rows": 10000,
       "fields": [
-        "*"
+        "*","process_cmdline"
       ],
       "sort": [
         {
