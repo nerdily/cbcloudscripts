@@ -80,7 +80,7 @@ def get_date_range(days_to_export):
 def main():
     # Main function to parse arguments and retrieve the results
 
-    parser = argparse.ArgumentParser(prog="export-endpoints.py",
+    parser = argparse.ArgumentParser(prog="export-audit-log.py",
                                      description="Query VMware Carbon Black \
                                          Cloud and export Audit Log data.")
     requiredNamed = parser.add_argument_group('required arguments')
