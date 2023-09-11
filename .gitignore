@@ -1,11 +1,6 @@
-/endpoints/devices.csv
-/keys.txt
-/alerts/alerts.csv
-/alerts/alerts-v7.csv
-/usb-devices/usb-devices.csv
-/sensor-kits/sensor-kits.json
-/usb-devices/usb-devices.xlsx
-/watchlists/watchlists.xlsx
-/audit-log/audit_log.json
-/processes/processes.csv
-/events/events.csv
+*.csv
+*.json
+*.xlsx
+*/*.csv
+*/*.json
+*/*.xlsx
