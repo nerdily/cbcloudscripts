@@ -2,22 +2,16 @@ import pandas as pd
 import requests
 import argparse
 import sys
+import time
 
 
-# This script exports the queried for events into a csv via the process search API. To change the query, look at the "payload" variable which is the
-# json-formatted request made to the CB Cloud back end. The developer documentation has a full list of what can be queried.
-# The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 alerts, you would need
-# multiple requests to fetch them all.
+# This script exports the queried for events into a csv via the process search and events search API. It will first
+# do a process search and then pivot from there using the process_guid to return full event details.
 
-# This is an example of requesting additional fields that normally might need a second query to retrieve after the summary request.  Fields marked with "Process***" here:
-# https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-fields/
-# can simply be added to in the initial request making the follow-up request unnecessary.
-
-# Usage: python export-alerts.py --help
+# Usage: python events.py --help
 
 # API key permissions required:
-# Search - Events - org.search.events - CREATE
-# Search - Events - org.search.events - READ
+# TBD
 
 def get_environment(environment):
     # Function to get the required environment to build a Base URL. More info about building a Base URL can be found at
@@ -45,7 +39,7 @@ def get_environment(environment):
         return "https://gprd1usgw1.carbonblack-us-gov.vmware.com"
 
 
-def build_search_url(environment, org_key):
+def build_process_search_url(environment, org_key):
     # Build the initial search URL
     # Documentation on this specific API call can be found here:
     # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-api-processes/#start-a-process-search-v2
@@ -55,7 +49,7 @@ def build_search_url(environment, org_key):
     environment = get_environment(environment)
     return f"{environment}/api/investigate/v2/orgs/{org_key}/processes/search_jobs"
 
-def build_search_job_id_url(environment, org_key, job_id):
+def build_process_search_job_id_url(environment, org_key, job_id):
     # Build the URL to return the results of the search based on job_id
     # Documentation on this specific API call can be found here:
     # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-api-processes/#retrieve-results-for-a-process-detail-search-v2
@@ -65,9 +59,18 @@ def build_search_job_id_url(environment, org_key, job_id):
     return f"{environment}/api/investigate/v2/orgs/{org_key}/processes/detail_jobs/{job_id}/results"
 
 
+def build_event_search_url(environment, org_key, process_guid):
+    # Build the URL to perform an event search with a given process_guid
+    # Documentation on this specific API call can be found here:
+    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-api-processes/#get-events-associated-with-a-given-process-v2
+    environment = get_environment(environment)
+    return f"{environment}/api/investigate/v2/orgs/{org_key}/events/{process_guid}/_search"
+
+
 def main():
     # Main function to parse arguments and retrieve the endpoint results
 
+    # global event_data_df
     parser = argparse.ArgumentParser(prog="events.py",
                                      description="Query VMware Carbon Black Cloud for process data.")
     requiredNamed = parser.add_argument_group('required arguments')
@@ -82,26 +85,31 @@ def main():
                                help="API Secret Key")
     args = parser.parse_args()
 
-    req_url = build_search_url(args.environment, args.org_key)
+    req_url = build_process_search_url(args.environment, args.org_key)
     api_token = f"{args.api_secret}/{args.api_id}"
 
     payload = {
-      "criteria": {},
-      "exclusions": {},
-      "query": "process_name:powershell.exe",
-      "time_range": {
-        "window": "-1h"
-      },
-      "rows": 10000,
-      "fields": [
-        "*"
-      ],
-      "sort": [
+    "criteria":
+    {},
+    "exclusions":
+    {},
+    "query": "scriptload_name:*.js",
+    "time_range":
+    {
+        "window":"-5m"
+    },
+    "rows": 10000,
+    "fields":
+    [
+       "*"
+    ],
+    "sort":
+    [
         {
-          "field": "device_timestamp",
-          "order": "DESC"
+            "field": "device_timestamp",
+            "order": "DESC"
         }
-      ]
+    ]
     }
 
     headers = {
@@ -117,7 +125,7 @@ def main():
         job_id = response['job_id']
 
         # Now that we have a job_id, check the status of it.
-        req_url = build_search_job_id_url(args.environment, args.org_key, job_id)
+        req_url = build_process_search_job_id_url(args.environment, args.org_key, job_id)
 
         # Initialize contacted and completed to different values so the while loop kicks off at least once
         contacted = 1
@@ -127,11 +135,41 @@ def main():
             response = response.json()
             contacted = response['contacted']
             completed = response['completed']
-        events = pd.DataFrame.from_dict(response['results'])
+        print("Number of processes found: " + str(response['num_found']))
+        processes_df = pd.DataFrame.from_dict(response['results'])
+        print("Done with Process pull")
+
+        # Now that we have process_guids we can do an event search:
+        events_df = pd.DataFrame() # Instantiate our events dataframe
+        for i, row in processes_df.iterrows():
+            print("Process dataframe row " + str(processes_df.index[i]))
+            req_url = build_event_search_url(args.environment, args.org_key, row['process_guid'])
+            payload = {
+              "query": "scriptload_name:*.js",
+              "fields": ["*"],
+              "time_range": {
+                "window":"-5m"
+              }
+            }
+            # Initialize total_segments and processed_segments to different values so the while loop kicks off at least once
+            total_segments = 1
+            processed_segments = -1
+            while total_segments != processed_segments:
+                response = requests.request("POST", req_url, headers=headers, json=payload)
+                events_dict = response.json()
+                event_data_df = pd.DataFrame.from_dict(events_dict['results'])
+                total_segments = events_dict['total_segments']
+                processed_segments = events_dict['processed_segments']
+            print(f"Event search success {response}")
+            events_df = pd.concat([events_df, event_data_df], ignore_index=True)
+
+        merged_df = pd.merge(processes_df, events_df, on='process_guid', how='left')
 
         # Cool. Let's export to CSV now
-        events.to_csv('events.csv')
-        print('Saved to \'events.csv\'')
+        print("Done with Events pull")
+        timestamp = time.strftime("%Y%m%d-%H%M%S")  # create a timestamp for our filename
+        merged_df.to_csv('events-' + timestamp + '.csv')
+        print('Saved to \'events-' + timestamp + '.csv\'')
     else:
         print(response)
 
