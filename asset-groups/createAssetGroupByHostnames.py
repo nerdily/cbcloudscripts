@@ -54,7 +54,7 @@ def build_base_url(environment, org_key):
 def main():
     # Main function to parse arguments and retrieve the endpoint results
 
-    parser = argparse.ArgumentParser(prog="getAssetGroups.py",
+    parser = argparse.ArgumentParser(prog="createAssetGroupByHostnames.py",
                                      description="Query VMware Carbon Black \
                                          Cloud for asset groups.")
     requiredNamed = parser.add_argument_group('required arguments')
