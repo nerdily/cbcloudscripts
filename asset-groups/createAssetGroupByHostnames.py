@@ -55,8 +55,8 @@ def main():
     # Main function to parse arguments and retrieve the endpoint results
 
     parser = argparse.ArgumentParser(prog="createAssetGroupByHostnames.py",
-                                     description="Query VMware Carbon Black \
-                                         Cloud for asset groups.")
+                                     description="Create VMware Carbon Black \
+                                         Cloud asset group by hostname.")
     requiredNamed = parser.add_argument_group('required arguments')
     requiredNamed.add_argument("-e", "--environment", required=True, default="PROD05",
                                choices=["EAP1", "PROD01", "PROD02", "PROD05",
