@@ -137,11 +137,11 @@ def main():
             print(payload)
             data = request_data(session, payload, args.environment, args.org_key)
             alerts_json.extend(data["results"])
-    with open("alerts.json", "w") as f:
+    timestamp = time.strftime("%Y%m%d-%H%M%S") # create a timestamp for our filename
+    with open('alerts-' + timestamp + '.json', "w") as f:
         json.dump(alerts_json, f)
     # Now pull the json into a pandas dataframe as it can export to csv very nicely:
     alerts_df = pd.read_json("alerts.json")
-    timestamp = time.strftime("%Y%m%d-%H%M%S") # create a timestamp for our filename
     alerts_df.to_csv('alerts-v7-' + timestamp + '.csv' )
     print('Saved to \'alerts-v7-' + timestamp + ' .csv\'') # let the user know
 
