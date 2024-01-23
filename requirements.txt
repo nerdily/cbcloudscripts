@@ -1,7 +1,6 @@
 attrs==23.1.0
 boto3==1.28.33
 botocore==1.31.33
-carbon-black-cloud-sdk==1.4.3
 certifi==2022.12.7
 charset-normalizer==3.0.1
 contextlib2==21.6.0
