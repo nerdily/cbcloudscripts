@@ -4,9 +4,9 @@ import sys
 import json
 import time
 
-# This script establishes a liveresponse session to a device.
+# This script establishes a liveresponse session to a device, runs the 'repcli.exe status' command and then returns the result.
 
-# Usage: python LR-establish-session.py --help
+# Usage: python LR-run-repcli-status.py --help
 
 # API key permissions required:
 # org.liveresponse.session - CREATE, READ, DELETE
@@ -89,8 +89,8 @@ def build_close_session_url(environment, org_key, session_id):
 def main():
     # Main function to parse arguments and retrieve the endpoint results
 
-    parser = argparse.ArgumentParser(prog="LR-establish-session.py",
-                                     description="Begin a Live Response session with CB Cloud.")
+    parser = argparse.ArgumentParser(prog="LR-run-repcli-status.py",
+                                     description="Run the repcli status command via Live Response session.")
     requiredNamed = parser.add_argument_group('required arguments')
     requiredNamed.add_argument("-e", "--environment", required=True, default="PROD05",
                                choices=["EAP1", "PROD01", "PROD02", "PROD05",
