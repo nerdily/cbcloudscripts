@@ -2,6 +2,7 @@ import requests
 import argparse
 import sys
 import pandas as pd
+import time
 
 
 # This script exports the queried for endpoints into a csv. To change the query, look at the "payload" variable which is the
@@ -110,8 +111,9 @@ def main():
         print(devices_dict.get('num_found'))
 
         # Cool. Let's export to CSV now
-        devices.to_csv('devices.csv')
-        print('Saved to \'devices.csv\'')
+        timestamp = time.strftime("%Y%m%d-%H%M%S")  # create a timestamp for our filename
+        devices.to_csv('devices-' + timestamp + '-.csv')
+        print('Saved to \'devices-'+ timestamp +'-.csv')
 
     else:
         print(response)
