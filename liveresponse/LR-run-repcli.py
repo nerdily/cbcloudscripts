@@ -9,8 +9,9 @@ import time
 # Usage: python LR-establish-session.py --help
 
 # API key permissions required:
-# TBD
-
+# org.liveresponse.session - CREATE, READ, DELETE
+# org.liveresponse.process - READ, EXECUTE
+# org.liveresponse.file - CREATE, READ
 
 def get_environment(environment):
     # Function to get the required environment to build a Base URL. More info about building a Base URL can be found at
@@ -40,7 +41,7 @@ def get_environment(environment):
 def build_start_session_url(environment, org_key):
     # Build the base URL
     # Documentation on this specific API call can be found here:
-    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/#search-devices
+    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/live-response-api/#start-session
     # rtype: string
 
     environment = get_environment(environment)

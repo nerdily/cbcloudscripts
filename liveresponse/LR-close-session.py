@@ -9,7 +9,7 @@ import time
 # Usage: python LR-close-session.py --help
 
 # API key permissions required:
-# TBD
+# org.liveresponse.session - DELETE
 
 
 def get_environment(environment):

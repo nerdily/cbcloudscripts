@@ -9,7 +9,7 @@ import time
 # Usage: python LR-establish-session.py --help
 
 # API key permissions required:
-# TBD
+# org.liveresponse.session - CREATE
 
 
 def get_environment(environment):
