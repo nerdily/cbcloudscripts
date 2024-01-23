@@ -4,7 +4,7 @@ import sys
 import json
 import time
 
-# This script establishes a LiveResponse session to a device.
+# This script establishes a liveresponse session to a device.
 
 # Usage: python LR-establish-session.py --help
 

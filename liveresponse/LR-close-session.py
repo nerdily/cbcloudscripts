@@ -4,9 +4,9 @@ import sys
 import json
 import time
 
-# This script establishes a LiveResponse session to a device.
+# This script establishes a liveresponse session to a device.
 
-# Usage: python LR-establish-session.py --help
+# Usage: python LR-close-session.py --help
 
 # API key permissions required:
 # TBD
@@ -37,14 +37,14 @@ def get_environment(environment):
     elif environment == "GOVCLOUD":
         return "https://gprd1usgw1.carbonblack-us-gov.vmware.com"
 
-def build_start_session_url(environment, org_key):
+def build_close_session_url(environment, org_key, session_id):
     # Build the base URL
     # Documentation on this specific API call can be found here:
     # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/#search-devices
     # rtype: string
 
     environment = get_environment(environment)
-    return f"{environment}/appservices/v6/orgs/{org_key}/liveresponse/sessions"
+    return f"{environment}/appservices/v6/orgs/{org_key}/liveresponse/sessions/{session_id}"
 
 
 def main():
@@ -64,37 +64,23 @@ def main():
                                help="API ID")
     requiredNamed.add_argument("-s", "--api_secret", required=True,
                                help="API Secret Key")
-    requiredNamed.add_argument("-d", "--deviceid", required=True, help="Device ID of target system")
+    requiredNamed.add_argument("-sid", "--session_id", required=True, help="Session ID to close")
     args = parser.parse_args()
 
-    req_url = build_start_session_url(args.environment, args.org_key)
+    req_url = build_close_session_url(args.environment, args.org_key, args.session_id)
     api_token = f"{args.api_secret}/{args.api_id}"
-
-    payload = {
-        "device_id": f"{args.deviceid}"
-    }
 
     headers = {
         "Content-Type": "application/json",
         "X-Auth-Token": api_token
     }
 
-    # Setting status to PENDING initially so that it will execute the while loop at least once which will actually try and establish the LR session
-    status="PENDING"
-    print('status: ' + status)
-    while status == "PENDING":
-        response = requests.request("POST", req_url, headers=headers, json=payload)
-        status=json.loads(response.text)['status']
-        id=json.loads(response.text)['id']
-        status=status
-        print('Trying again in 10 seconds...')
-        time.sleep(10)
-    if status == "ACTIVE":
-        print('session id: ' + id)
-        print('status: ' + status)
-        cwd=json.loads(response.text)['current_working_directory']
-        print('current working directory: ' + cwd)
-
+    response = requests.request("DELETE", req_url, headers=headers)
+    if response.status_code == 204:
+        print(f"Success {response}")
+        print("Live Response session closed")
+    else:
+        print(response)
 
 
 if __name__ == "__main__":
