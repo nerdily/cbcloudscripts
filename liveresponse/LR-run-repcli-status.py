@@ -5,6 +5,7 @@ import json
 import time
 
 # This script establishes a liveresponse session to a device, runs the 'repcli.exe status' command and then returns the result.
+# This script is only meant for Windows endpoints at this time.
 
 # Usage: python LR-run-repcli-status.py --help
 
