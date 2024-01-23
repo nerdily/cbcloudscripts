@@ -79,7 +79,7 @@ def build_get_file_contents_url(environment, org_key, session_id, file_id):
 def build_close_session_url(environment, org_key, session_id):
     # Build the base URL
     # Documentation on this specific API call can be found here:
-    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/#search-devices
+    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/live-response-api/#close-session
     # rtype: string
 
     environment = get_environment(environment)
