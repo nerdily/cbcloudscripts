@@ -3,7 +3,6 @@ attrs==23.2.0
 backports-datetime-fromisoformat==2.0.1
 boto3==1.34.29
 botocore==1.34.29
-carbon-black-cloud-sdk==1.5.0
 certifi==2023.11.17
 charset-normalizer==3.3.2
 contextlib2==21.6.0
