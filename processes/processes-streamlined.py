@@ -13,7 +13,7 @@ import sys
 # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/platform-search-fields/
 # can simply be added to in the initial request making the follow-up request unnecessary.
 
-# Usage: python export-alerts.py --help
+# Usage: python process-streamlined.py --help
 
 # API key permissions required:
 # Search - Events - org.search.processes - CREATE
