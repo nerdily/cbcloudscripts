@@ -5,12 +5,12 @@ import pandas as pd
 import time
 
 
-# This script exports the queried for endpoints into a csv. To change the query, look at the "payload" variable which is the
+# This script exports the queried for devices into a csv. To change the query, look at the "payload" variable which is the
 # json-formatted request made to the CB Cloud back end. The developer documentation has a full list of what can be queried.
-# The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 endpoints, you would need
+# The CB Cloud API will return up to 10,000 items in a single request. If you have more than 10,000 devices, you would need
 # multiple requests to fetch them all.
 
-# Usage: python export-endpoints.py --help
+# Usage: python export-devices.py --help
 
 # API key permissions required:
 # Device - General Information - device - read
@@ -55,7 +55,7 @@ def build_base_url(environment, org_key):
 def main():
     # Main function to parse arguments and retrieve the endpoint results
 
-    parser = argparse.ArgumentParser(prog="export-endpoints.py",
+    parser = argparse.ArgumentParser(prog="export-devices-by-sensor-version.py",
                                      description="Query VMware Carbon Black \
                                          Cloud for endpoint data.")
     requiredNamed = parser.add_argument_group('required arguments')
@@ -77,10 +77,10 @@ def main():
 
     payload = {
         "criteria": {
-            "deployment_type": [
-                "ENDPOINT",
-                "WORKLOAD",
-                "VDI"
+            "sensor_version": [
+                "4.0.0.1292",
+                "3.9.2.2698",
+                "3.9.1.2464"
             ]
         },
         "sort": [
@@ -112,8 +112,8 @@ def main():
 
         # Cool. Let's export to CSV now
         timestamp = time.strftime("%Y%m%d-%H%M%S")  # create a timestamp for our filename
-        devices.to_csv('devices-' + timestamp + '-.csv')
-        print('Saved to \'devices-'+ timestamp +'-.csv')
+        devices.to_csv('devices-' + timestamp + '.csv')
+        print('Saved to \'devices-'+ timestamp +'.csv')
 
     else:
         print(response)
