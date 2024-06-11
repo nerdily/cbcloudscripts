@@ -104,7 +104,7 @@ def main():
         # drop unneeded rows:
         apikeys_pd = apikeys_pd.drop(columns=['serviceConnector', 'stats', 'sessionId', 'apiKey', 'orgId'])
 
-        # convert date columsn from epoch (milliseconds) to datetime
+        # convert date columns from epoch (milliseconds) to datetime
         apikeys_pd['createTime'] = pd.to_datetime(apikeys_pd['createTime'], unit='ms')
         apikeys_pd['lastUpdatedTime'] = pd.to_datetime(apikeys_pd['lastUpdatedTime'], unit='ms')
         apikeys_pd['lastReportedTime'] = pd.to_datetime(apikeys_pd['lastReportedTime'], unit='ms')
@@ -113,7 +113,7 @@ def main():
         # Cool. Let's export to CSV now
         timestamp = time.strftime("%Y%m%d-%H%M%S")  # create a timestamp for our filename
         apikeys_pd.to_csv('apikeys-' + timestamp + '.csv')
-        print('Saved to \'apikeys-'+ timestamp + '.csv')
+        print('Saved to \'apikeys-' + timestamp + '.csv')
 
 
 if __name__ == "__main__":
