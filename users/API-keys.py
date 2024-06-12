@@ -42,8 +42,8 @@ def get_environment(environment):
 
 def build_base_url(environment, org_id):
     # Build the base URL
-    # Documentation on this specific API call can be found here:
-    # https://developer.carbonblack.com/reference/carbon-black-cloud/platform/latest/devices-api/#search-devices
+    # Documentation on this specific API call does not exist as it's a private API.
+    # We've reverse engineered its usage via the CB Cloud console.
     # rtype: string
 
     environment = get_environment(environment)
@@ -112,7 +112,7 @@ def main():
 
         # Cool. Let's export to CSV now
         timestamp = time.strftime("%Y%m%d-%H%M%S")  # create a timestamp for our filename
-        apikeys_pd.to_csv('apikeys-' + timestamp + '.csv')
+        apikeys_pd.to_csv('apikeys-' + timestamp + '.csv', index=False)
         print('Saved to \'apikeys-' + timestamp + '.csv')
 
 
