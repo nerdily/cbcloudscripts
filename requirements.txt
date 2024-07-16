@@ -8,7 +8,7 @@ charset-normalizer==3.3.2
 contextlib2==21.6.0
 datefinder==0.7.3
 et-xmlfile==1.1.0
-idna==3.6
+idna==3.7
 importlib-metadata==7.0.1
 jaraco.classes==3.3.0
 jmespath==1.0.1
@@ -26,13 +26,13 @@ pytz==2023.4
 PyYAML==6.0.1
 referencing==0.33.0
 regex==2023.12.25
-requests==2.31.0
+requests==2.32.3
 rpds-py==0.17.1
 s3transfer==0.10.0
 schema==0.7.5
 six==1.16.0
 solrq==1.1.2
 tzdata==2023.4
-urllib3==2.1.0
+urllib3==2.2.2
 validators==0.22.0
-zipp==3.17.0
+zipp==3.19.2
