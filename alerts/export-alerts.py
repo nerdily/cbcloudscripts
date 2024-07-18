@@ -58,7 +58,7 @@ def build_base_url(environment, org_key):
 def main():
     # Main function to parse arguments and retrieve the endpoint results
 
-    parser = argparse.ArgumentParser(prog="export-endpoints.py",
+    parser = argparse.ArgumentParser(prog="export-devices.py",
                                      description="Query VMware Carbon Black \
                                          Cloud for alert data.")
     requiredNamed = parser.add_argument_group('required arguments')
